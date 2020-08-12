@@ -5,6 +5,7 @@
 #include <algorithm>
 
 #include "llvm/Demangle/Demangle.h"
+#include "com_github_zhkl0228_demumble_Demangler.h"
 
 const char kDemumbleVersion[] = "1.2.2.git";
 
@@ -32,6 +33,34 @@ static void print_demangled(const char* format, const char* s, size_t* n_used) {
   } else {
     printf("%s", s);
   }
+}
+
+extern "C" {
+/*
+ * Class:     com_github_zhkl0228_demumble_Demangler
+ * Method:    demangle
+ * Signature: (Ljava/lang/String;)Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_com_github_zhkl0228_demumble_Demangler_demangle
+  (JNIEnv *env, jclass cls, jstring mangled) {
+  const char *s = env->GetStringUTFChars(mangled, NULL);
+  if(s == NULL) {
+    return mangled;
+  }
+  jstring ret;
+  if (char* itanium = llvm::itaniumDemangle(s, NULL, NULL, NULL)) {
+    ret = env->NewStringUTF(itanium);
+    free(itanium);
+  } else if (char* ms = llvm::microsoftDemangle(s, NULL, NULL, NULL, NULL)) {
+    ret = env->NewStringUTF(ms);
+    free(ms);
+  } else {
+    ret = mangled;
+  }
+  env->ReleaseStringUTFChars(mangled, s);
+  return ret;
+}
+
 }
 
 static bool is_mangle_char_itanium(char c) {

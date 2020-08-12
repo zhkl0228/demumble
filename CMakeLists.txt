@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.2.0 FATAL_ERROR)
 project(demumble CXX)
 
+find_package(JNI REQUIRED)
+include_directories(${JAVA_INCLUDE_PATH})
+include_directories(${JAVA_INCLUDE_PATH2})
+
 if (UNIX)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -fno-exceptions -fno-rtti")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden")
@@ -31,7 +35,15 @@ if (WIN32)
 endif()
 
 include_directories(third_party/llvm/include)
-add_executable(demumble
+add_executable(demangle
+               demumble.cc
+               third_party/llvm/lib/Demangle/ItaniumDemangle.cpp
+               third_party/llvm/lib/Demangle/MicrosoftDemangle.cpp
+               third_party/llvm/lib/Demangle/MicrosoftDemangleNodes.cpp
+)
+set_target_properties(demangle PROPERTIES CXX_STANDARD 14
+                                          CXX_STANDARD_REQUIRED ON)
+add_library(demumble SHARED
                demumble.cc
                third_party/llvm/lib/Demangle/ItaniumDemangle.cpp
                third_party/llvm/lib/Demangle/MicrosoftDemangle.cpp
