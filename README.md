@@ -75,7 +75,7 @@ Optionally print both mangled and demangled names:
 
 ## Build instructions
 
-Use cmake to build: `cmake -G Ninja && ninja`
+Use cmake to build: `mkdir build && cd build && cmake .. && make`
 
 Run tests after building: `python demumble_test.py`
 
