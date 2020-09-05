@@ -2,9 +2,15 @@ package com.github.zhkl0228.demumble;
 
 public class DemanglerFactory {
 
+    private static boolean nativeDemanglerAvailable;
+
     public static GccDemangler createDemangler() {
         try {
-            Demangler.demangle("");
+            NativeDemangler demangler = new NativeDemangler();
+            if (!nativeDemanglerAvailable) {
+                demangler.demangle("");
+                nativeDemanglerAvailable = true;
+            }
             return new NativeDemangler();
         } catch (Throwable ignored) {
             return new JavaDemangler();

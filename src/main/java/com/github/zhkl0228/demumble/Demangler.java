@@ -9,7 +9,7 @@ public class Demangler {
       }
   }
 
-  public static native String demangle(String mangled);
+  static native String demangle(String mangled);
 
 }
 
