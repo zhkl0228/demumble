@@ -3,8 +3,12 @@ package com.github.zhkl0228.demumble;
 public class DemanglerFactory {
 
     private static boolean nativeDemanglerAvailable;
+    private static boolean initializeNativeDemanglerFailed;
 
     public static GccDemangler createDemangler() {
+        if (initializeNativeDemanglerFailed) {
+            return new JavaDemangler();
+        }
         try {
             NativeDemangler demangler = new NativeDemangler();
             if (!nativeDemanglerAvailable) {
@@ -13,6 +17,7 @@ public class DemanglerFactory {
             }
             return new NativeDemangler();
         } catch (Throwable ignored) {
+            initializeNativeDemanglerFailed = true;
             return new JavaDemangler();
         }
     }
